@@ -1,12 +1,13 @@
 from flaskblog import app
 from flask import render_template, url_for, flash, redirect
 from flaskblog.forms import RegistrationForm, LoginForm
+from flaskblog.models import User, Post
 
 @app.route("/")
 @app.route("/home")
 def home():
-    # TODO homepage
-    return render_template('home.html', title='Home')
+    posts = Post.query.all()
+    return render_template('home.html', posts=posts)
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():
