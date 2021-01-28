@@ -44,12 +44,12 @@
     </div>
     <div class="border-top pt-3">
         <small class="text-muted">
-            Don't have an account? <a class="ml-2" href="{{ url_for('register') }}">Sign Up</a>
+            Don't have an account? <a class="ml-2" href="{{ url_for('users.register') }}">Sign Up</a>
         </small>
     </div>
     <div>
         <small class="text-muted">
-            Forgot your password? <a class="ml-2" href="{{ url_for('request_reset') }}">Reset your password</a>
+            Forgot your password? <a class="ml-2" href="{{ url_for('users.request_reset') }}">Reset your password</a>
         </small>
     </div>
 {% endblock content %}
