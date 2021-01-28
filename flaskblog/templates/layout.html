@@ -31,7 +31,7 @@
             <div class="navbar-nav">
                 {% if current_user.is_authenticated %}
                     <a class="nav-item nav-link" href="{{ url_for('new_post') }}">Create a new post</a>
-                    <a class="nav-item nav-link" href="{{ url_for('account') }}">My Account</a>
+                    <a class="nav-item nav-link" href="{{ url_for('account') }}">{{current_user.username}}'s Account</a>
                     <a class="nav-item nav-link" href="{{ url_for('logout') }}">Logout</a>
                 {% else %}
                     <a class="nav-item nav-link" href="{{ url_for('login') }}">Login</a>
@@ -59,8 +59,8 @@
         </div>
       </div>
     </main>
-
-    <footer class="footer">
+    <div class="my-3"></div>
+    <footer class="footer position-relative" style="background-color: #E6E6FA">
       <div class="container">
         <span class="text-muted alightleft">My flaskblog project...</span>
           <span class="alignright"><a href="http://www.github.com/camotoad">Check out the code on github</a></span>
