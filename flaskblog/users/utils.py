@@ -1,14 +1,14 @@
 import secrets
 import os
 from flask_mail import Message
-from flask import url_for
-from flaskblog import mail, app
+from flask import url_for, current_app
+from flaskblog import mail
 
 def save_picture(picture):
     random = secrets.token_hex(10)
     _, extension = os.path.splitext(picture.filename)
     file_name = random + extension
-    picture_path = os.path.join(app.root_path, 'static/pics', file_name)
+    picture_path = os.path.join(current_app.root_path, 'static/pics', file_name)
     picture.save(picture_path)
 
     return file_name
