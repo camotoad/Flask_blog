@@ -1,10 +1,12 @@
-from flaskblog import app, db, bcrypt
+from flaskblog import app, db, bcrypt, mail
 from flask import render_template, url_for, flash, redirect, request, abort
-from flaskblog.forms import RegistrationForm, LoginForm, UpdateAccountForm, NewPostForm, UpdatePostForm
+from flaskblog.forms import (RegistrationForm, LoginForm, UpdateAccountForm,
+                             NewPostForm, UpdatePostForm, RequestResetForm, ResetPasswordForm)
 from flaskblog.models import User, Post
 from flask_login import login_user, current_user, logout_user, login_required
 import secrets
 import os
+from flask_mail import Message
 
 
 @app.route("/")
@@ -51,6 +53,7 @@ def logout():
     logout_user()
     return redirect(url_for('home'))
 
+
 def save_picture(picture):
     random = secrets.token_hex(10)
     _, extension = os.path.splitext(picture.filename)
@@ -59,6 +62,7 @@ def save_picture(picture):
     picture.save(picture_path)
 
     return file_name
+
 
 @app.route("/account", methods=['GET', 'POST'])
 @login_required
@@ -77,6 +81,7 @@ def account():
     image_file = url_for('static', filename='pics/' + current_user.image_file)
     return render_template('account.html', title='My Account', image_file=image_file, form=form)
 
+
 @app.route("/post/new", methods=['GET', 'POST'])
 @login_required
 def new_post():
@@ -89,10 +94,12 @@ def new_post():
         return redirect(url_for('home'))
     return render_template('new_post.html', title='Create a new post', form=form, legend='Create a new post')
 
+
 @app.route("/post/<int:post_id>")
 def post(post_id):
     post = Post.query.get_or_404(post_id)
     return render_template('post.html', title=post.title, post=post)
+
 
 @app.route("/post/<int:post_id>/update", methods=['GET', 'POST'])
 @login_required
@@ -112,6 +119,7 @@ def update_post(post_id):
         form.content.data = post.content
     return render_template('new_post.html', title='Update post', form=form, legend='Update Post')
 
+
 @app.route("/post/<int:post_id>/delete", methods=['POST'])
 @login_required
 def delete_post(post_id):
@@ -123,11 +131,54 @@ def delete_post(post_id):
     flash('Your post has been deleted!', 'success')
     return redirect(url_for('home'))
 
+
 @app.route("/user/<string:username>")
 def user_posts(username):
     page = request.args.get('page', 1, type=int)
     user = User.query.filter_by(username=username).first_or_404()
-    posts = Post.query.filter_by(author=user)\
-        .order_by(Post.date_posted.desc())\
+    posts = Post.query.filter_by(author=user) \
+        .order_by(Post.date_posted.desc()) \
         .paginate(page=page, per_page=5)
     return render_template('user_posts.html', posts=posts, user=user)
+
+
+def send_email(user):
+    token = user.get_reset_token()
+    msg = Message('Password Reset Request', recipients=[user.email])
+    msg.body = f'''Please click the link below to reset your password:
+{url_for('reset_password', token=token, _external=True)}
+
+If you did not make this request, you may ignore this email and no changes will be made.
+'''
+    mail.send(msg)
+
+
+@app.route("/forgot-password", methods=['GET', 'POST'])
+def request_reset():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+    form = RequestResetForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user is not None:
+            send_email(user)
+        flash(f'If {form.email.data} exists in our database, you will receive an email with '
+              'instructions on how to reset your password.', 'info')
+        return redirect(url_for('home'))
+    return render_template('request_reset.html', title='Forgot password', form=form)
+
+
+@app.route("/reset-password/<token>", methods=['GET', 'POST'])
+def reset_password(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+    form = ResetPasswordForm()
+    user = User.verify_reset_token(token)
+    if user is not None:
+        if form.validate_on_submit():
+            hashed_pw = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+            user.password = hashed_pw
+            db.session.commit()
+            flash(f'Password has been updated. You may now log in.', 'success')
+            return redirect(url_for('login'))
+    return render_template('password_reset.html', title='Reset Password', form=form)
