@@ -75,7 +75,7 @@ a.article-title:hover {
   font-size: 2.5rem;
 }
 
-.fter {
+.footer {
   position: relative;
   bottom: 0;
   width: 100%;
@@ -89,4 +89,22 @@ a.article-title:hover {
 }
 .alignright {
 	float: right;
+}
+
+.btn-outline-primary
+{
+    border-color: #682e98 !important;
+    color: #682e98 !important;
+}
+.btn-outline-primary:hover
+{
+    background-color: #682e98;
+    color: #FFFFFF !important;
+}
+
+.btn-primary
+{
+    border-color: #682e98 !important;
+    color: #FFFFFF !important;
+    background-color: #682e98 !important;
 }

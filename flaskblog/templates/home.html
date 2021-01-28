@@ -18,7 +18,7 @@
     {% for page_number in posts.iter_pages(left_edge=1, left_current=1, right_edge=1, right_current=2) %}
         {% if page_number %}
             {% if posts.page == page_number %}
-                <a class="btn btn-outline-primary disabled" href="#" >{{ page_number }}</a>
+                <a class="btn btn-outline-primary disabled" href="#">{{ page_number }}</a>
             {% else %}
                 <a class="btn btn-primary" href="{{ url_for('home', page=page_number) }}">{{ page_number }}</a>
             {% endif %}

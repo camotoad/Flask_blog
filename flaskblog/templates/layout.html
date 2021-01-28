@@ -17,7 +17,7 @@
 </head>
 <body>
     <header class="site-header">
-      <nav class="navbar navbar-expand-md navbar-dark bg-primary fixed-top">
+      <nav class="navbar navbar-expand-md navbar-dark fixed-top" style="background-color:#682e98">
         <div class="container">
             <a class="navbar-brand mr-4" href="/">Flask Blog</a>
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
@@ -43,7 +43,7 @@
       </nav>
     </header>
     <main role="main" class="container">
-      <div class="row">
+      <div class="row" style="min-height: 850px">
         <div class="col-md-10">
           {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
@@ -60,7 +60,7 @@
       </div>
     </main>
     <div class="my-3"></div>
-    <footer class="footer position-relative" style="background-color: #E6E6FA">
+    <footer class="footer position-relative" style="background-color: #E6E6FA;height: 60px;line-height: 60px;">
       <div class="container">
         <span class="text-muted alightleft">My flaskblog project...</span>
           <span class="alignright"><a href="http://www.github.com/camotoad">Check out the code on github</a></span>
