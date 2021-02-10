@@ -97,5 +97,8 @@ def reset_password(token):
             user.password = hashed_pw
             db.session.commit()
             flash(f'Password has been updated. You may now log in.', 'success')
-            return redirect(url_for('login'))
+            return redirect(url_for('users.login'))
+    else:
+        flash(f"Your token is not valid or is expired", 'danger')
+        return redirect(url_for('main.home'))
     return render_template('password_reset.html', title='Reset Password', form=form)
